@@ -5,30 +5,10 @@
 <title>Tự luận Sinh 11</title>
 
 <style>
-body{
-font-family:Arial;
-max-width:900px;
-margin:auto;
-}
-
-textarea{
-width:100%;
-height:80px;
-margin-top:5px;
-}
-
-.box{
-border:1px solid gray;
-padding:10px;
-margin:10px;
-border-radius:10px;
-}
-
-button{
-padding:10px;
-margin-top:10px;
-}
-
+body{font-family:Arial;max-width:900px;margin:auto;}
+textarea{width:100%;height:90px;margin-top:5px;}
+.box{border:1px solid gray;padding:12px;margin:12px;border-radius:10px;}
+button{padding:10px;margin-top:10px;}
 </style>
 
 </head>
@@ -46,7 +26,7 @@ Tên học sinh:
 
 <h2 id="score"></h2>
 
-<h3>Lịch sử điểm</h3>
+<h3>Bảng xếp hạng</h3>
 
 <div id="history"></div>
 
@@ -54,78 +34,71 @@ Tên học sinh:
 
 let questions=[
 
-{q:"Câu 1: Nhập câu hỏi",keywords:["ý1","ý2"]},
+{q:"Câu 1: Trình bày ứng dụng của hướng động trong sản xuất nông nghiệp",keywords:["rễ","nước","khoáng","ánh sáng","thân leo","giàn"]},
 
-{q:"Câu 2: Nhập câu hỏi",keywords:["ý1"]},
+{q:"Câu 2: Trình bày ứng dụng của ứng động trong sản xuất nông nghiệp",keywords:["ngủ","hạt","nhiệt độ","ánh sáng","ra hoa","côn trùng"]},
 
-{q:"Câu 3",keywords:["ý"]},
+{q:"Câu 3: Mô tả cơ chế cảm ứng khi chạm vào vật nóng",keywords:["thụ thể","tủy sống","xung thần kinh","co tay","phản xạ"]},
 
-{q:"Câu 4",keywords:["ý"]},
+{q:"Câu 4: Vì sao hạ Ca2+ máu gây rối loạn cảm giác",keywords:["ca2","synapse","chất trung gian","xung","neuron"]},
 
-{q:"Câu 5",keywords:["ý"]},
+{q:"Câu 5: Điều gì xảy ra nếu thụ thể đau bị tổn thương",keywords:["không cảm nhận","đau","nguy hiểm","bảo vệ","tổn thương"]},
 
-{q:"Câu 6",keywords:["ý"]},
+{q:"Câu 6: Trình bày cấu tạo và chức năng neuron",keywords:["thân","sợi nhánh","sợi trục","xung thần kinh","truyền"]},
 
-{q:"Câu 7",keywords:["ý"]},
+{q:"Câu 7: Synapse là gì? Quá trình truyền tin",keywords:["tiếp xúc","chất trung gian","khe","màng trước","màng sau"]},
 
-{q:"Câu 8",keywords:["ý"]}
+{q:"Câu 8: Tập tính là gì? Phân loại",keywords:["chuỗi","bẩm sinh","học được","di truyền","môi trường"]}
 
 ];
 
 let html="";
 
 for(let i=0;i<8;i++){
-
 html+=`
-
 <div class="box">
-
 <b>${questions[i].q}</b>
-
 <br>
-
-<textarea id="a${i}"></textarea>
-
-</div>
-
-`;
-
+<textarea id="a${i}" placeholder="Nhập câu trả lời..."></textarea>
+</div>`;
 }
 
 document.getElementById("questions").innerHTML=html;
 
 function grade(){
 
-let score=0;
+let totalScore=0;
+let maxEach=10/8; //1.25 điểm mỗi câu
 
 for(let i=0;i<8;i++){
 
 let ans=document.getElementById("a"+i).value.toLowerCase();
+let match=0;
 
 for(let k of questions[i].keywords){
+if(ans.includes(k)) match++;
+}
 
-if(ans.includes(k)){
+let ratio=match/questions[i].keywords.length;
 
-score+=10;
-
-break;
-
+if(ratio>=0.8){
+totalScore+=maxEach;
+}else{
+totalScore+=maxEach*ratio; // thiếu keyword bị trừ theo tỉ lệ
 }
 
 }
 
-}
+let finalScore=totalScore.toFixed(2);
 
-document.getElementById("score").innerHTML="Điểm: "+score+"/80";
+document.getElementById("score").innerHTML="Điểm: "+finalScore+" / 10";
 
 let history=JSON.parse(localStorage.getItem("scores")||"[]");
 
 history.push({
-
 name:document.getElementById("name").value,
-
-score:score
-
+score:Number(finalScore),
+time:new Date().toLocaleString()
 });
 
 localStorage.setItem("scores",JSON.stringify(history));
@@ -138,12 +111,12 @@ function showHistory(){
 
 let history=JSON.parse(localStorage.getItem("scores")||"[]");
 
+history.sort((a,b)=>b.score-a.score);
+
 let h="";
 
 for(let i of history){
-
-h+=i.name+" : "+i.score+"<br>";
-
+h+=i.name+" : "+i.score+" điểm ("+i.time+")<br>";
 }
 
 document.getElementById("history").innerHTML=h;
