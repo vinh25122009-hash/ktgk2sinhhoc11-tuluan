@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Tự luận Sinh 11</title>
+
+<style>
+body{
+font-family:Arial;
+max-width:900px;
+margin:auto;
+}
+
+textarea{
+width:100%;
+height:80px;
+margin-top:5px;
+}
+
+.box{
+border:1px solid gray;
+padding:10px;
+margin:10px;
+border-radius:10px;
+}
+
+button{
+padding:10px;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>Tự luận giữa kỳ II – Sinh học 11 (2025–2026)</h2>
+
+Tên học sinh:
+<input id="name">
+
+<div id="questions"></div>
+
+<button onclick="grade()">Chấm điểm</button>
+
+<h2 id="score"></h2>
+
+<h3>Lịch sử điểm</h3>
+
+<div id="history"></div>
+
+<script>
+
+let questions=[
+
+{q:"Câu 1: Nhập câu hỏi",keywords:["ý1","ý2"]},
+
+{q:"Câu 2: Nhập câu hỏi",keywords:["ý1"]},
+
+{q:"Câu 3",keywords:["ý"]},
+
+{q:"Câu 4",keywords:["ý"]},
+
+{q:"Câu 5",keywords:["ý"]},
+
+{q:"Câu 6",keywords:["ý"]},
+
+{q:"Câu 7",keywords:["ý"]},
+
+{q:"Câu 8",keywords:["ý"]}
+
+];
+
+let html="";
+
+for(let i=0;i<8;i++){
+
+html+=`
+
+<div class="box">
+
+<b>${questions[i].q}</b>
+
+<br>
+
+<textarea id="a${i}"></textarea>
+
+</div>
+
+`;
+
+}
+
+document.getElementById("questions").innerHTML=html;
+
+function grade(){
+
+let score=0;
+
+for(let i=0;i<8;i++){
+
+let ans=document.getElementById("a"+i).value.toLowerCase();
+
+for(let k of questions[i].keywords){
+
+if(ans.includes(k)){
+
+score+=10;
+
+break;
+
+}
+
+}
+
+}
+
+document.getElementById("score").innerHTML="Điểm: "+score+"/80";
+
+let history=JSON.parse(localStorage.getItem("scores")||"[]");
+
+history.push({
+
+name:document.getElementById("name").value,
+
+score:score
+
+});
+
+localStorage.setItem("scores",JSON.stringify(history));
+
+showHistory();
+
+}
+
+function showHistory(){
+
+let history=JSON.parse(localStorage.getItem("scores")||"[]");
+
+let h="";
+
+for(let i of history){
+
+h+=i.name+" : "+i.score+"<br>";
+
+}
+
+document.getElementById("history").innerHTML=h;
+
+}
+
+showHistory();
+
+</script>
+
+</body>
+
+</html>
